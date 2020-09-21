@@ -14,8 +14,7 @@ class CreateBlogkeywordsTable extends Migration
     public function up()
     {
         Schema::create('blogkeywords', function (Blueprint $table) {
-            $table->id();
-            $table->integer('KeywordID');
+            $table->bigIncrements('KeywordID');
             $table->integer('BlogID');
             $table->foreign('BlogID')->references('blog')->on('BlogID');
             $table->String('KeywordName');

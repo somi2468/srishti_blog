@@ -13,17 +13,15 @@ class CreateBlogTable extends Migration
      */
     public function up()
     {
-        Schema::create('blog', function (Blueprint $table) {
-            $table->id();
-            
-            $table->integer('BlogID');
+        Schema::create('blogs', function (Blueprint $table) {
+            $table->bigIncrements('BlogID');
             $table->String('Name');
             $table->integer('BlogCategoryID');
             $table->foreign('BlogCategoryID')->references('blogcategory')->on('CategoryID');
             $table->String('Bannerimage');
             $table->String('Mainimage');
             $table->String('Description');
-            $table->tinyInteger('Status')->default('0');
+            $table->tinyInteger('Status');
             $table->timestamps();
         });
     }

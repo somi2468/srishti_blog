@@ -14,8 +14,7 @@ class CreateBlogseoTable extends Migration
     public function up()
     {
         Schema::create('blogseo', function (Blueprint $table) {
-            $table->id();
-            $table->integer('SeoID');
+            $table->bigIncrements('SeoID');
             $table->String('MetaTitle');
             $table->String('MetaDescription');
             $table->String('MetaKeyword');

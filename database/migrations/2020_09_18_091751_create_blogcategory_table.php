@@ -13,9 +13,8 @@ class CreateBlogcategoryTable extends Migration
      */
     public function up()
     {
-        Schema::create('blogcategory', function (Blueprint $table) {
-            $table->id();
-            $table->integer('CategoryID');
+        Schema::create('blog_categories', function (Blueprint $table) {
+            $table->bigIncrements('CategoryID');
             $table->String('CategoryName');
             $table->tinyInteger('Status')->default('0');
             $table->timestamps();
