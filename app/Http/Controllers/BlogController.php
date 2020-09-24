@@ -17,21 +17,17 @@ class BlogController extends Controller
     {
     	if($request->isMethod('post'))
     	{
-    		$file=$request->file('Bannerimage');
-            $filename='Bannerimage' . time().'.'.$request->Bannerimage->extension();
-            $file->move("upload/Bannerimage",$filename);
+    		
 
-            $files=$request->file('Mainimage');
-            $filenames='Mainimage' . time().'.'.$request->Mainimage->extension();
-            $files->move("upload/Mainimage",$filenames);
+
+       
 
     		$data = $request->all();
     		//echo "<pre>";print_r($data);die;
             $blog= new Blog;
             $blog->Name=$request->Name;
             $blog->BlogCategoryID=$request->BlogCategoryID;
-            $blog->Bannerimage=$filename;
-            $blog->Mainimage=$filenames;
+            
             if(!empty($data['Description']))
             {
             	$blog->Description = $data['Description'];
@@ -41,12 +37,50 @@ class BlogController extends Controller
             $blog->Status=$request->Status;
             $blog->save();
 
+            $url="http://127.0.0.1:8000/storage/";
+        $file=$request->file('Bannerimage');
+        $extension=$file->getClientOriginalExtension();
+        // dd($extension);
+        // exit;
+        $Bannerimagepath=$request->file('Bannerimage')->storeAs('images','Bannerimage' .time().'.'.$request->Bannerimage->extension());
+        //dd($extension);
+        // exit;    
+        $blog->Bannerimage=$Bannerimagepath;
+        $blog->Bannerimagepath=$url.$Bannerimagepath;
+        $blog->save();
+
+         $url="http://127.0.0.1:8000/storage/";
+        $file=$request->file('Mainimage');
+        $extension=$file->getClientOriginalExtension();
+        // dd($extension);
+        // exit;
+        $Mainimagepath=$request->file('Mainimage')->storeAs('images','Mainimage' .time().'.'.$request->Mainimage->extension());
+        //dd($extension);
+        // exit;    
+        $blog->Mainimage=$Mainimagepath;
+        $blog->Mainimagepath=$url.$Mainimagepath;
+        $blog->save();
+
              if($blog)
             {   
 
                 Alert::success('Blog Successfully Added!', 'Success Message');
             return redirect('/admin/add-blog');
         }
+
+        if($blog){
+                return response()->json($data=[
+                'status'=>200,
+                'msg'=>'User Registration Successfull',
+                
+            ]);
+        }
+        else{
+                return response()->json($data=[
+                'status'=>203,
+                'msg'=>'something went wrong'
+               ]);
+            }
     	}
 
         //Category Dropdown Menu Code
@@ -60,35 +94,93 @@ class BlogController extends Controller
     	return view('admin.blog.viewblog',compact('blog'));
     }
 
+    public function allData(Request $req)
+    {
+         $user=Blog::get();
+        
+        if($user->count()){
+            return response()->json($data = [
+            'status' => 200,
+            'msg'=>'Success',
+            'BlogApi' => $user
+            ]);
+        }
+        else{
+            return response()->json($data = [
+            'status' => 201,
+            'msg' => 'Data Not Found'
+            ]);
+        }
+    }    
+  
+    public function show($BlogID){
+
+        $blogDetails =Blog::find($BlogID);
+           
+        //dd($blogDetails);
+        if($blogDetails->count()){
+            return response()->json($data = [
+            'status' => 200,
+            'msg'=>'Success',
+            'Blog' => $blogDetails
+            ]);
+        }
+        else{
+            return response()->json($data = [
+            'status' => 201,
+            'msg' => 'Data Not Found'
+            ]);
+        }    
+     }
     public function editBlog(Request $request,$BlogID=null)
     {
     	if($request->isMethod('post'))
     	{
-    		$file=$request->file('Bannerimage');
-            $filename='Bannerimage' . time().'.'.$request->Bannerimage->extension();
-            $file->move("upload/Bannerimage",$filename);
+            $data = $request->all();
 
-            $files=$request->file('Mainimage');
-            $filenames='Mainimage' . time().'.'.$request->Mainimage->extension();
-            $files->move("upload/Mainimage",$filenames);
+             $blog= Blog::find($request->BlogID);
+            $blog->Name=$data['Name'];
+            $blog->BlogCategoryID=$data['BlogCategoryID'];
+            $blog->Description=$data['Description'];
+            $blog->save();
 
-    		$data = $request->all();
+if($request->hasFile('Mainimage'))
+        {
+    		 $url="http://127.0.0.1:8000/storage/";
+        $file=$request->file('Bannerimage');
+        $extension=$file->getClientOriginalExtension();
+        // dd($extension);
+        // exit;
+
+        $Bannerimagepath=$request->file('Bannerimage')->storeAs('images','Bannerimage' .time().'.'.$request->Bannerimage->extension());
+        //dd($extension);
+        // exit;    
+        $blog->Bannerimage=$Bannerimagepath;
+        $blog->Bannerimagepath=$url.$Bannerimagepath;
+        $blog->save();
+}
+if($request->hasFile('Mainimage'))
+        {
+         $url="http://127.0.0.1:8000/storage/";
+        $file=$request->file('Mainimage');
+        $extension=$file->getClientOriginalExtension();
+        // dd($extension);
+        // exit;
+        $Mainimagepath=$request->file('Mainimage')->storeAs('images','Mainimage' .time().'.'.$request->Mainimage->extension());
+        //dd($extension);
+        // exit;    
+        $blog->Mainimage=$Mainimagepath;
+        $blog->Mainimagepath=$url.$Mainimagepath;
+        $blog->save();
+       }
+    		
 
     		// if(!empty($data['Description']))
       //       {
       //          $data['Description'] = '';
       //       }
 
-            Blog::where(['BlogID'=>$BlogID])->update(
-            	[
-            	'Name'=>$data['Name'],
-            	'BlogCategoryID'=>$data['BlogCategoryID'],
-            	'Bannerimage'=>$filename,
-            	'Mainimage'=>$filenames,
-            	'Description'=>$data['Description'],
-            	'Status'=>$data['Status'],
-        ]);
-           
+            
            Alert::success('Blog Updated Successfully!!', 'Success Message');
            return redirect('/admin/view-blog'); 
     	}

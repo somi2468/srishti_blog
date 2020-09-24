@@ -96,7 +96,10 @@
                                 <div class="col col-md-2">
                                  <label>Description</label></div>
                                  <div class="col-12 col-md-10">
-                      			 <textarea name="Description" id="Description" class="form-control">
+                      			 <textarea name="Description" id="Description" class="form-control" size="15" maxlength="15" style=" white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 75ch;">
                       			 	
                       			 </textarea>
                               </div>

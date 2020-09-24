@@ -18,8 +18,10 @@ class CreateBlogTable extends Migration
             $table->String('Name');
             $table->integer('BlogCategoryID');
             $table->foreign('BlogCategoryID')->references('blogcategory')->on('CategoryID');
-            $table->String('Bannerimage');
-            $table->String('Mainimage');
+            $table->String('Bannerimage')->default('0');
+            $table->String('Bannerimagepath')->default('0');
+            $table->String('Mainimage')->default('0');
+            $table->String('Mainimagepath')->default('0');
             $table->String('Description');
             $table->tinyInteger('Status');
             $table->timestamps();
